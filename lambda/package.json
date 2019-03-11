@@ -1,0 +1,9 @@
+{
+  "name": "claptrap-alexa-lambda",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+	"ask-sdk-core": "^2.0.0",
+    "ask-sdk-model": "^1.0.0"
+  }
+}
