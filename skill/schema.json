@@ -1,0 +1,39 @@
+{
+    "interactionModel": {
+        "languageModel": {
+            "invocationName": "claptrap",
+            "intents": [
+                {
+                    "name": "AMAZON.CancelIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.HelpIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.StopIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.NavigateHomeIntent",
+                    "samples": []
+                },
+                {
+                    "name": "joke",
+                    "slots": [],
+                    "samples": [
+                        "go on then",
+                        "generate a joke",
+                        "tell one",
+                        "make me laugh",
+                        "say something funny",
+                        "to tell a joke",
+                        "for a joke"
+                    ]
+                }
+            ],
+            "types": []
+        }
+    }
+}
