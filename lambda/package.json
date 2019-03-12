@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
 	"ask-sdk-core": "^2.0.0",
-    "ask-sdk-model": "^1.0.0"
+    "ask-sdk-model": "^1.0.0",
+	"request-promise": "^4.0.0"
   }
 }

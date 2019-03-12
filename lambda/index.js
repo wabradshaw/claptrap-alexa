@@ -1,5 +1,28 @@
 const Alexa = require('ask-sdk-core');
+const Request = require('request-promise');
 
+const url = "https://claptrapapp.com/service/";
+
+function getJoke(){
+	return Request({
+		url: url + "joke",
+		json: true
+	})
+}
+
+function tellJoke(joke, handlerInput){
+	var spokenPunchline = '<prosody rate="65%">' 
+						+ joke.punchline.replace(joke.linguisticReplacement, '<prosody volume="loud">' + joke.linguisticReplacement + '</prosody>') 
+						+ "</prosody>";
+	var spokenJoke = joke.setup + '<break strength="x-strong"/>' + spokenPunchline;
+	var writtenJoke = joke.setup + '\n ' + joke.punchline;
+	return handlerInput.responseBuilder
+      .speak(spokenJoke)
+      .reprompt(spokenJoke)
+      .withSimpleCard('Claptrap', writtenJoke)
+      .getResponse();
+}
+	
 const LaunchRequestHandler = {
   canHandle(handlerInput) {
     return handlerInput.requestEnvelope.request.type === 'LaunchRequest';
@@ -16,18 +39,14 @@ const LaunchRequestHandler = {
 };
 
 const JokeIntentHandler = {
-  canHandle(handlerInput) {
-    return handlerInput.requestEnvelope.request.type === 'IntentRequest'
-      && handlerInput.requestEnvelope.request.intent.name === 'JokeIntent';
-  },
-  handle(handlerInput) {
-    const speechText = 'Hello World!';
-
-    return handlerInput.responseBuilder
-      .speak(speechText)
-      .withSimpleCard('Hello World', speechText)
-      .getResponse();
-  },
+	canHandle(handlerInput) {
+		return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+			&& handlerInput.requestEnvelope.request.intent.name === 'JokeIntent';
+	},
+	handle(handlerInput) {
+		return getJoke()
+			.then(data => tellJoke(data, handlerInput))
+	}
 };
 
 const HelpIntentHandler = {
