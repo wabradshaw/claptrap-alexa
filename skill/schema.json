@@ -50,6 +50,21 @@
                         "good joke",
                         "that was good"
                     ]
+                },
+                {
+                    "name": "BadIntent",
+                    "slots": [],
+                    "samples": [
+                        "not funny",
+                        "didn't make sense",
+                        "shite",
+                        "shit",
+                        "terrible",
+                        "rubbish",
+                        "bad",
+                        "that was awful",
+                        "that sucked"
+                    ]
                 }
             ],
             "types": []

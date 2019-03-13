@@ -10,6 +10,13 @@ const goodRatingTemplates = [
 	"Excellent, thanks for the feedback."
 ];
 
+const badRatingTemplates = [
+	"Thank you, I'll try to do better next time.",
+	"Oh no! Thanks for letting me know.",
+	"Sorry! Thanks for the feedback.",
+	"Sorry about that."
+];
+
 function describeFrom(templates, endSession, handlerInput){
 	var template = templates[Math.floor(Math.random() * templates.length)];
 	
@@ -103,6 +110,24 @@ const GoodIntentHandler = {
 	}
 };
 
+const BadIntentHandler = {
+	canHandle(handlerInput) {
+		return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+			&& handlerInput.requestEnvelope.request.intent.name === 'BadIntent';
+	},
+	handle(handlerInput) {
+		var spec = handlerInput.attributesManager.getSessionAttributes();
+		
+		if(spec.nucleus){
+			return rateJoke(-1, spec, handlerInput)
+				.then(() => describeFrom(badRatingTemplates, false, handlerInput));
+		} else {
+			return getJoke()
+				.then(data => tellJoke(data, handlerInput))
+		}
+	}
+};
+
 const HelpIntentHandler = {
   canHandle(handlerInput) {
     return handlerInput.requestEnvelope.request.type === 'IntentRequest'
@@ -167,6 +192,7 @@ exports.handler = skillBuilder
     LaunchRequestHandler,
     JokeIntentHandler,
 	GoodIntentHandler,
+	BadIntentHandler,
     HelpIntentHandler,
     CancelAndStopIntentHandler,
     SessionEndedRequestHandler
