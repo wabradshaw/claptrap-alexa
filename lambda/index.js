@@ -3,11 +3,29 @@ const Request = require('request-promise');
 
 const url = "https://claptrapapp.com/service/";
 
+const goodRatingTemplates = [
+	"Thank you, I'm glad you liked it.",
+	"Thanks, good to hear.",
+	"You liked it? Great!",
+	"Excellent, thanks for the feedback."
+];
+
+function describeFrom(templates, endSession, handlerInput){
+	var template = templates[Math.floor(Math.random() * templates.length)];
+	
+	return handlerInput.responseBuilder
+      .speak(template)
+      .reprompt(template)
+      .withSimpleCard('Claptrap', template)
+	  .withShouldEndSession(endSession)
+      .getResponse();
+};
+
 function getJoke(){
 	return Request({
 		url: url + "joke",
 		json: true
-	})
+	});
 }
 
 function tellJoke(joke, handlerInput){
@@ -15,12 +33,30 @@ function tellJoke(joke, handlerInput){
 						+ joke.punchline.replace(joke.linguisticReplacement, '<prosody volume="loud">' + joke.linguisticReplacement + '</prosody>') 
 						+ "</prosody>";
 	var spokenJoke = joke.setup + '<break strength="x-strong"/>' + spokenPunchline;
-	var writtenJoke = joke.setup + '\n ' + joke.punchline;
+	var writtenJoke = joke.setup + '\n ' + joke.punchline;	
+	
+    handlerInput.attributesManager.setSessionAttributes(joke);
+		  
 	return handlerInput.responseBuilder
       .speak(spokenJoke)
       .reprompt(spokenJoke)
       .withSimpleCard('Claptrap', writtenJoke)
+	  .withShouldEndSession(false)
       .getResponse();
+}
+
+function rateJoke(vote, spec, handlerInput){
+	var id = handlerInput.requestEnvelope.session.sessionId.slice(-32);
+	
+	return Request({
+		method: 'POST',		
+		url: url + "rate/" + id,
+		body: {
+			vote: vote,
+			joke: spec
+		},
+		json: true
+	});
 }
 	
 const LaunchRequestHandler = {
@@ -46,6 +82,24 @@ const JokeIntentHandler = {
 	handle(handlerInput) {
 		return getJoke()
 			.then(data => tellJoke(data, handlerInput))
+	}
+};
+
+const GoodIntentHandler = {
+	canHandle(handlerInput) {
+		return handlerInput.requestEnvelope.request.type === 'IntentRequest'
+			&& handlerInput.requestEnvelope.request.intent.name === 'GoodIntent';
+	},
+	handle(handlerInput) {
+		var spec = handlerInput.attributesManager.getSessionAttributes();
+		
+		if(spec.nucleus){
+			return rateJoke(1, spec, handlerInput)
+				.then(() => describeFrom(goodRatingTemplates, false, handlerInput));
+		} else {
+			return getJoke()
+				.then(data => tellJoke(data, handlerInput))
+		}
 	}
 };
 
@@ -112,6 +166,7 @@ exports.handler = skillBuilder
   .addRequestHandlers(
     LaunchRequestHandler,
     JokeIntentHandler,
+	GoodIntentHandler,
     HelpIntentHandler,
     CancelAndStopIntentHandler,
     SessionEndedRequestHandler

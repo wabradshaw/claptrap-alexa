@@ -20,9 +20,12 @@
                     "samples": []
                 },
                 {
-                    "name": "joke",
+                    "name": "JokeIntent",
                     "slots": [],
                     "samples": [
+                        "new joke",
+                        "joke",
+                        "to tell one",
                         "go on then",
                         "generate a joke",
                         "tell one",
@@ -30,6 +33,22 @@
                         "say something funny",
                         "to tell a joke",
                         "for a joke"
+                    ]
+                },
+                {
+                    "name": "GoodIntent",
+                    "slots": [],
+                    "samples": [
+                        "vote that one up",
+                        "i liked that joke",
+                        "i liked that one",
+                        "hahaha",
+                        "hilarious",
+                        "that was funny",
+                        "good one",
+                        "great one",
+                        "good joke",
+                        "that was good"
                     ]
                 }
             ],
